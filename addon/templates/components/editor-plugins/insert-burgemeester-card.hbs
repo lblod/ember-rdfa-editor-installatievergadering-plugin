@@ -1,0 +1,65 @@
+<div class="modal-dialog__header">
+  <div class="grid">
+    <div class="col--10-12">
+      {{#if loadData.isRunning}}
+        <p class="loader"><span class="u-visually-hidden">Aan het laden</span></p>
+      {{else}}
+        {{#if bestuursorgaan}}
+          <p class="u-spacer--tiny">
+            Wilde u graag de scenario's inzake de <strong>burgemeester</strong> beheren?
+          </p>
+        {{else}}
+          <p class="u-spacer--tiny">
+            <strong>Gelieve eerst een bestuursorgaan te selecteren.</strong>
+          </p>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+{{#unless loadData.isRunning}}
+  <div class="modal-dialog__footer">
+    {{#wu-button-group}}
+      {{#if bestuursorgaan}}
+          {{wu-button
+            label="Beheer"
+            isNarrow=true
+            onClick=(action "togglePopup")
+          }}
+      {{/if}}
+    {{/wu-button-group}}
+  </div>
+{{/unless}}
+
+{{# if popup}}
+  {{#wu-modal
+     title="Beheer scenario's burgemeester"
+     dialog-class="modal-dialog--wide modal-dialog--sectioned"
+     dialog-content-class="modal-dialog__content--sectioned"
+     onClose=(action 'togglePopup')
+     as |m|}}
+    <div class="u-spacer--bottom--tiny">
+      <div class="grid grid--collapse">
+        &nbsp;
+      </div>
+    </div>
+
+    {{#m.content isSectioned=true}}
+      {{#if burgemeester}}
+
+      {{else}}
+        Er werden (nog) geen gegevens over de burgemeester gevonden. <br>
+        Bevindt het bestuur zich in het scenario waarin er tijdig geen burgemeester benoemd werd? <br>
+        Voeg dan het volgende sjabloon toe.<br>
+      {{/if}}
+      {{wu-button label="Scenario: geen burgemeester benoemd" class="button button--alt button--narrow" onClick=(action 'insertNoMayor')}}
+      {{burgemeester-aanstelling/no-burgemeester-template id=outputNoMayor class="u-hidden"}}
+    {{/m.content}}
+    <div class="modal-dialog__footer">
+      {{#wu-button-group}}
+        {{wu-button label="Annuleer" class="button button--narrow" onClick=(action 'togglePopup')}}
+      {{/wu-button-group}}
+    </div>
+  {{/wu-modal}}
+{{/if}}

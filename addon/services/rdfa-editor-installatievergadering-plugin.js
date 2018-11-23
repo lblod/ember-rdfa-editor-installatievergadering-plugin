@@ -2,6 +2,8 @@ import { getOwner } from '@ember/application';
 import Service from '@ember/service';
 import EmberObject, { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
+import { isArray } from '@ember/array';
+import { warn } from '@ember/debug';
 
 /**
  * Service responsible for correct annotation of dates
@@ -12,11 +14,9 @@ import { task } from 'ember-concurrency';
  * @extends EmberService
  */
 const RdfaEditorInstallatievergaderingPlugin = Service.extend({
-
-  init(){
-    this._super(...arguments);
-    const config = getOwner(this).resolveRegistration('config:environment');
-  },
+  insertBurgemeesterText: 'http://mu.semte.ch/vocabularies/ext/insertBurgemeesterText',
+  insertBurgemeesterOutput: 'http://mu.semte.ch/vocabularies/ext/insertBurgemeesterOutput',
+  insertBurgemeesterCard: 'editor-plugins/insert-burgemeester-card',
 
   /**
    * Restartable task to handle the incoming events from the editor dispatcher
@@ -33,19 +33,41 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
   execute: task(function * (hrId, contexts, hintsRegistry, editor) {
     if (contexts.length === 0) return [];
 
-    const hints = [];
-    contexts.forEach((context) => {
-      let relevantContext = this.detectRelevantContext(context)
-      if (relevantContext) {
-        hintsRegistry.removeHintsInRegion(context.region, hrId, this.get('who'));
-        hints.pushObjects(this.generateHintsForContext(context));
+    let cardMap= {};
+    for(let context of contexts){
+      this.setBestuursorgaanIfSet(context.context);
+      let triple = this.detectRelevantContext(context);
+      if(!triple) continue;
+
+      let domNode = this.findDomNodeForContext(editor, context, this.domNodeMatchesRdfaInstructive(triple));
+
+      if(!domNode) continue;
+
+
+      //insert burgemeester scenario
+      if(triple.predicate == this.insertBurgemeesterText){
+        hintsRegistry.removeHintsInRegion(context.region, hrId, this.insertBurgemeesterCard);
+        let hints = this.generateHintsForContext(context, triple, domNode, editor);
+        let cards = hints.map(h => this.generateCard(hrId, hintsRegistry, editor, h, this.insertBurgemeesterCard));
+        cardMap[this.insertBurgemeesterCard] = [...(cardMap[this.insertBurgemeesterCard] || []), ...cards];
       }
-    });
-    const cards = hints.map( (hint) => this.generateCard(hrId, hintsRegistry, editor, hint));
-    if(cards.length > 0){
-      hintsRegistry.addHints(hrId, this.get('who'), cards);
+
+      //edit burgemeester scenario
+      let domNodeRegion = [ editor.getRichNodeFor(domNode).start, editor.getRichNodeFor(domNode).end ];
+      if(triple.predicate == this.insertBurgemeesterOutput && //sometimes it hints twice
+         !(cardMap[this.insertBurgemeesterCard] || []).find(c => c.location[0] == domNodeRegion[0] && c.location[1] == domNodeRegion[1])){
+        hintsRegistry.removeHintsInRegion(domNodeRegion, hrId, this.insertBurgemeesterCard);
+        let hints = this.generateHintsForContext(context, triple, domNode, editor);
+        let cards = hints.map(h => this.generateCard(hrId, hintsRegistry, editor, h, this.insertBurgemeesterCard));
+        cardMap[this.insertBurgemeesterCard] = [...(cardMap[this.insertBurgemeesterCard] || []), ...cards];
+      }
+
     }
-  }).restartable(),
+
+    if(Object.values(cardMap).length > 0){
+      Object.keys(cardMap).forEach(k => hintsRegistry.addHints(hrId, k, cardMap[k]));
+    }
+  }).keepLatest(),
 
   /**
    * Given context object, tries to detect a context the plugin can work on
@@ -59,25 +81,13 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
    * @private
    */
   detectRelevantContext(context){
-    return context.text.toLowerCase().indexOf('hello') >= 0;
-  },
-
-
-
-  /**
-   * Maps location of substring back within reference location
-   *
-   * @method normalizeLocation
-   *
-   * @param {[int,int]} [start, end] Location withing string
-   * @param {[int,int]} [start, end] reference location
-   *
-   * @return {[int,int]} [start, end] absolute location
-   *
-   * @private
-   */
-  normalizeLocation(location, reference){
-    return [location[0] + reference[0], location[1] + reference[0]];
+    if(context.context.slice(-1)[0].predicate == this.insertBurgemeesterText){
+      return context.context.slice(-1)[0];
+    }
+    if(context.context.slice(-1)[0].predicate == this.insertBurgemeesterOutput){
+      return context.context.slice(-1)[0];
+    }
+    return null;
   },
 
   /**
@@ -94,17 +104,18 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
    *
    * @private
    */
-  generateCard(hrId, hintsRegistry, editor, hint){
+  generateCard(hrId, hintsRegistry, editor, hint, cardName){
     return EmberObject.create({
       info: {
-        label: this.get('who'),
         plainValue: hint.text,
-        htmlString: '<b>hello world</b>',
         location: hint.location,
+        domNodeToUpdate: hint.domNode,
+        instructiveUri: hint.instructiveUri,
         hrId, hintsRegistry, editor
       },
       location: hint.location,
-      card: this.get('who')
+      options: hint.options,
+      card: cardName
     });
   },
 
@@ -119,13 +130,56 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
    *
    * @private
    */
-  generateHintsForContext(context){
+  generateHintsForContext(context, instructiveTriple, domNode, editor, options = {}){
     const hints = [];
-    const index = context.text.toLowerCase().indexOf('hello');
-    const text = context.text.slice(index, index+5);
-    const location = this.normalizeLocation([index, index + 5], context.region);
-    hints.push({text, location});
+    const text = context.text;
+    let location = context.region;
+    if(instructiveTriple.predicate == this.insertBurgemeesterOutput){
+      location = [ editor.getRichNodeFor(domNode).start, editor.getRichNodeFor(domNode).end ];
+      options.noHighlight= true;
+    }
+    hints.push({text, location, domNode, instructiveUri: instructiveTriple.predicate, options});
     return hints;
+  },
+
+  ascendDomNodesUntil(rootNode, domNode, condition){
+    if(!domNode || rootNode.isEqualNode(domNode)) return null;
+    if(!condition(domNode))
+      return this.ascendDomNodesUntil(rootNode, domNode.parentElement, condition);
+    return domNode;
+  },
+
+  domNodeMatchesRdfaInstructive(instructiveRdfa){
+    let ext = 'http://mu.semte.ch/vocabularies/ext/';
+    return (domNode) => {
+      if(!domNode.attributes || !domNode.attributes.property)
+        return false;
+      let expandedProperty = domNode.attributes.property.value.replace('ext:', ext);
+      if(instructiveRdfa.predicate == expandedProperty)
+        return true;
+      return false;
+    };
+  },
+
+  findDomNodeForContext(editor, context, condition){
+    let richNodes = isArray(context.richNode) ? context.richNode : [ context.richNode ];
+    let domNode = richNodes
+          .map(r => this.ascendDomNodesUntil(editor.rootNode, r.domNode, condition))
+          .find(d => d);
+    if(!domNode){
+      warn(`Trying to work on unattached domNode. Sorry can't handle these...`, {id: 'fractievorming.domNode'});
+    }
+    return domNode;
+  },
+
+  setBestuursorgaanIfSet(triples) {
+    const zitting = triples.find((triple) => triple.object === 'http://data.vlaanderen.be/ns/besluit#Zitting');
+    if (zitting) {
+      const bestuursorgaan = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
+      if (bestuursorgaan){
+        this.set('bestuursorgaanUri', bestuursorgaan.object);
+      }
+    }
   }
 });
 

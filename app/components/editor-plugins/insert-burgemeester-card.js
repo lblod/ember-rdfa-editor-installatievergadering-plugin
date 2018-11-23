@@ -1,0 +1,1 @@
+export { default } from '@lblod/ember-rdfa-editor-installatievergadering-plugin/components/editor-plugins/insert-burgemeester-card';

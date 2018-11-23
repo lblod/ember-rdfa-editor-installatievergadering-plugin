@@ -1,0 +1,1 @@
+export { default } from '@lblod/ember-rdfa-editor-installatievergadering-plugin/components/burgemeester-aanstelling/no-burgemeester-template';
