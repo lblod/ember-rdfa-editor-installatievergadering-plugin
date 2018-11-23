@@ -56,7 +56,11 @@ export default Component.extend({
   },
 
   createWrappingHTML(innerHTML){
-    return `<div property="ext:insertBurgemeesterOutput">${innerHTML}</div>`;
+    //adds timestamp to trigger diff
+    return `<div property="ext:insertBurgemeesterOutput">
+            ${new Date().toISOString()}
+            ${innerHTML}
+           </div>`;
   },
 
   loadData: task(function *(){
@@ -72,7 +76,7 @@ export default Component.extend({
   outputNoMayor: computed('id', function() {
     return `output-no-mayor-${this.elementId}`;
   }),
-  
+
   actions: {
     insert(){
       const html = this.createWrappingHTML(document.getElementById(this.outputId).innerHTML);
