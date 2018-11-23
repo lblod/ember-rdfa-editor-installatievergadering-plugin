@@ -1,20 +1,21 @@
-ember-rdfa-editor-installatievergadering-plugin
+@lblod/ember-rdfa-editor-installatievergadering-plugin
 ==============================================================================
 
-[Short description of the addon.]
+Plugin to manage flows specific to the "installatievergadering"
 
 Installation
 ------------------------------------------------------------------------------
 
 ```
-ember install ember-rdfa-editor-installatievergadering-plugin
+ember install @lblod/ember-rdfa-editor-installatievergadering-plugin
 ```
 
 
 Usage
 ------------------------------------------------------------------------------
 
-[Longer description of how to use the addon in apps.]
+Plugin to manage flows specific to the "installatievergadering".
+It wil probably contain much custom stuff, I'd have a look at the code in your place.
 
 
 Contributing
