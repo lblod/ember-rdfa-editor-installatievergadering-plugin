@@ -4,6 +4,7 @@ import EmberObject, { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 import { isArray } from '@ember/array';
 import { warn } from '@ember/debug';
+import { inject as service } from '@ember/service';
 
 /**
  * Service responsible for correct annotation of dates
@@ -14,6 +15,7 @@ import { warn } from '@ember/debug';
  * @extends EmberService
  */
 const RdfaEditorInstallatievergaderingPlugin = Service.extend({
+  store: service(),
   insertBurgemeesterText: 'http://mu.semte.ch/vocabularies/ext/insertBurgemeesterText',
   insertBurgemeesterOutput: 'http://mu.semte.ch/vocabularies/ext/insertBurgemeesterOutput',
   insertBurgemeesterCard: 'editor-plugins/insert-burgemeester-card',
@@ -43,7 +45,6 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
 
       if(!domNode) continue;
 
-
       //insert burgemeester scenario
       if(triple.predicate == this.insertBurgemeesterText){
         hintsRegistry.removeHintsInRegion(context.region, hrId, this.insertBurgemeesterCard);
@@ -63,6 +64,8 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
       }
 
     }
+
+    yield this.setMandaatVoorzitterInInstallatieVergadering(editor);
 
     if(Object.values(cardMap).length > 0){
       Object.keys(cardMap).forEach(k => hintsRegistry.addHints(hrId, k, cardMap[k]));
@@ -85,6 +88,9 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
       return context.context.slice(-1)[0];
     }
     if(context.context.slice(-1)[0].predicate == this.insertBurgemeesterOutput){
+      return context.context.slice(-1)[0];
+    }
+    if(context.context.slice(-1)[0].predicate == this.insertCurrentVoorzitterMandaat){
       return context.context.slice(-1)[0];
     }
     return null;
@@ -180,6 +186,34 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
         this.set('bestuursorgaanUri', bestuursorgaan.object);
       }
     }
+  },
+
+  async getMandaatHuidigeVoorzitterGemeenteraad(){
+    let bestuursfunctieUri = 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000012';
+    if(!this.bestuursorgaanUri) return null;
+    let query = {
+      'filter[bestuursfunctie][:uri:]': bestuursfunctieUri,
+      'filter[bevat-in][:uri:]': this.bestuursorgaanUri
+    };
+    return (await this.store.query('mandaat', query)).firstObject;
+  },
+
+  async setMandaatVoorzitterInInstallatieVergadering(editor){
+     //we expect only one
+    let domNodeWithInstructive = document.querySelector('[property="ext:currentVoorzitterMandaat"]');
+    if(!domNodeWithInstructive)
+      return;
+
+    let voorzitter  = await this.getMandaatHuidigeVoorzitterGemeenteraad();
+    if(!voorzitter)
+      return;
+
+    let updatedHtml =
+     `<span property="org:holds" resource=${voorzitter.uri}>
+          ${domNodeWithInstructive.textContent}
+     </span>
+     `;
+     editor.replaceNodeWithHTML(domNodeWithInstructive, updatedHtml);
   }
 });
 
