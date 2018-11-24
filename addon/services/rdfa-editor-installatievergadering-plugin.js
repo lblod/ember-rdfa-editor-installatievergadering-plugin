@@ -32,12 +32,17 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
    *
    * @public
    */
-  execute: task(function * (hrId, contexts, hintsRegistry, editor) {
+  execute: task(function * (hrId, contexts, hintsRegistry, editor, extraInfo = []) {
     if (contexts.length === 0) return [];
+
+    //if we see event was triggered by this plugin, ignore it
+    if(extraInfo.find(i => i && i.who == this.who)){
+      return [];
+    }
 
     let cardMap= {};
     for(let context of contexts){
-      this.setBestuursorgaanIfSet(context.context);
+      yield this.setBestuursorgaanIfSet(context.context, editor);
       let triple = this.detectRelevantContext(context);
       if(!triple) continue;
 
@@ -178,14 +183,17 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
     return domNode;
   },
 
-  setBestuursorgaanIfSet(triples) {
+  async setBestuursorgaanIfSet(triples, editor) {
     const zitting = triples.find((triple) => triple.object === 'http://data.vlaanderen.be/ns/besluit#Zitting');
-    if (zitting) {
-      const bestuursorgaan = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
-      if (bestuursorgaan){
-        this.set('bestuursorgaanUri', bestuursorgaan.object);
-      }
-    }
+
+    if (!zitting)
+      return;
+
+    const bestuursorgaan = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
+    if (!bestuursorgaan)
+      return;
+
+    this.set('bestuursorgaanUri', bestuursorgaan.object);
   },
 
   async getMandaatHuidigeVoorzitterGemeenteraad(){
@@ -199,9 +207,14 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
   },
 
   async setMandaatVoorzitterInInstallatieVergadering(editor){
-     //we expect only one
     let domNodeWithInstructive = document.querySelector('[property="ext:currentVoorzitterMandaat"]');
     if(!domNodeWithInstructive)
+      return;
+
+    let prevBestuursorgaanUri = null;
+    if(domNodeWithInstructive.firstElementChild && domNodeWithInstructive.firstElementChild.attributes.resource)
+        prevBestuursorgaanUri = domNodeWithInstructive.firstElementChild.attributes.resource.value;
+    if(prevBestuursorgaanUri == this.bestuursorgaanUri)
       return;
 
     let voorzitter  = await this.getMandaatHuidigeVoorzitterGemeenteraad();
@@ -209,11 +222,14 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
       return;
 
     let updatedHtml =
-     `<span property="org:holds" resource=${voorzitter.uri}>
-          ${domNodeWithInstructive.textContent}
-     </span>
+     `<span property="ext:currentVoorzitterMandaat">
+        <span class="u-hidden" property="ext:currentVoorzitterMandaatBestuursorgaan" resource=${this.bestuursorgaanUri}>&nbsp;</span>
+        <span property="org:holds" resource=${voorzitter.uri}>
+          ${domNodeWithInstructive.textContent.trim()}
+        </span>
+      </span>
      `;
-     editor.replaceNodeWithHTML(domNodeWithInstructive, updatedHtml);
+    editor.replaceNodeWithHTML(domNodeWithInstructive, updatedHtml, false, [{ who: 'editor-plugins/installatievergadering-card' }]);
   }
 });
 
