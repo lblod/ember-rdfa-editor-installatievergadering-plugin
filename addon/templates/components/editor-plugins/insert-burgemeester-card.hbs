@@ -34,31 +34,45 @@
 
 {{# if popup}}
   {{#wu-modal
-     title="Beheer scenario's burgemeester"
-     dialog-class="modal-dialog--wide modal-dialog--sectioned"
+     title="Kies scenario voor benoeming en eedaflegging van de burgemeester"
+     dialog-class="modal-dialog--sectioned"
      dialog-content-class="modal-dialog__content--sectioned"
      onClose=(action 'togglePopup')
      as |m|}}
-    <div class="u-spacer--bottom--tiny">
-      <div class="grid grid--collapse">
-        &nbsp;
-      </div>
-    </div>
 
     {{#m.content isSectioned=true}}
-      {{#if burgemeester}}
+	    {{#unless burgemeester}}
+				<div class="alert alert--small u-spacer--none u-hr">
+					<div class="alert__message">
+						<p>Eens de eedaflegging van de burgemeester voltooid is en gedeeld werd met Gelinkt Notuleren, kan het scenario "Burgemeester benoemd" hier geselecteerd worden.</p>
+					</div>
+		    </div>
+	    {{/unless}}
 
-      {{else}}
-        Er werden (nog) geen gegevens over de burgemeester gevonden. <br>
-        Bevindt het bestuur zich in het scenario waarin er tijdig geen burgemeester benoemd werd? <br>
-        Voeg dan het volgende sjabloon toe.<br>
-      {{/if}}
-      {{wu-button label="Scenario: geen burgemeester benoemd" class="button button--alt button--narrow" onClick=(action 'insertNoMayor')}}
-      {{burgemeester-aanstelling/no-burgemeester-template id=outputNoMayor class="u-hidden"}}
+	    <ul class="link-list link-list--bordered">
+	      {{#if burgemeester}}
+		      <li class="link-list__item">
+	      		{{wu-button label="Burgemeester benoemd" onClick=null}}
+	      		{{!--  onClick=(action 'insertMayor') --}}
+		      </li>
+	      {{else}}
+		      <li class="link-list__item">
+		      	{{wu-button disabled=true label="Burgemeester benoemd (nog niet beschikbaar)" onClick=null}}
+		      </li>
+	      {{/if}}
+		    <li class="link-list__item">
+		      {{wu-button label="Burgemeester benoemd, maar nog geen eedaflegging op installatievergadering" onClick=null}}
+		       {{!-- onClick=(action 'MayorNoOath') --}}
+		    </li>
+		    <li class="link-list__item">
+		      {{wu-button label="Geen burgemeester benoemd op installatievergadering" onClick=(action 'insertNoMayor')}}
+		    </li>
+	      {{burgemeester-aanstelling/no-burgemeester-template id=outputNoMayor class="u-hidden"}}
+    	</ul>
     {{/m.content}}
     <div class="modal-dialog__footer">
       {{#wu-button-group}}
-        {{wu-button label="Annuleer" class="button button--narrow" onClick=(action 'togglePopup')}}
+        {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
       {{/wu-button-group}}
     </div>
   {{/wu-modal}}
