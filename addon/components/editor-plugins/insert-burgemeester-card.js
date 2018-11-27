@@ -77,6 +77,10 @@ export default Component.extend({
     return `output-no-mayor-${this.elementId}`;
   }),
 
+  outputMayorNoOath: computed('id', function() {
+    return `output-mayor-no-oath${this.elementId}`;
+  }),
+
   actions: {
     insert(){
       const html = this.createWrappingHTML(document.getElementById(this.outputId).innerHTML);
@@ -85,6 +89,11 @@ export default Component.extend({
     },
     insertNoMayor(){
       const html = this.createWrappingHTML(document.getElementById(this.outputNoMayor).innerHTML);
+      this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
+      this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
+    },
+    insertMayorNoOath(){
+      const html = this.createWrappingHTML(document.getElementById(this.outputMayorNoOath).innerHTML);
       this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
       this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
     },

@@ -52,22 +52,23 @@
 	    <ul class="link-list link-list--bordered">
 	      {{#if burgemeester}}
 		      <li class="link-list__item">
-	      		{{wu-button label="Burgemeester benoemd" onClick=null}}
-	      		{{!--  onClick=(action 'insertMayor') --}}
+	      		{{wu-button label="Burgemeester benoemd en eed afgelegd " onClick=null}}
+	      		{{!-- (action 'insertMayor') --}}
+			      {{!-- {{burgemeester-aanstelling/no-burgemeester-template id=insertMayor class="u-hidden"}} --}}
 		      </li>
 	      {{else}}
 		      <li class="link-list__item">
-		      	{{wu-button disabled=true label="Burgemeester benoemd (nog niet beschikbaar)" onClick=null}}
+		      	{{wu-button disabled=true label="Burgemeester benoemd en eed afgelegd (nog niet beschikbaar)" onClick=null}}
 		      </li>
 	      {{/if}}
 		    <li class="link-list__item">
-		      {{wu-button label="Burgemeester benoemd, maar nog geen eedaflegging op installatievergadering" onClick=null}}
-		       {{!-- onClick=(action 'MayorNoOath') --}}
+	      	{{wu-button disabled=true label="Burgemeester benoemd, maar nog geen eedaflegging ten tijde van installatievergadering" onClick=(action 'insertMayorNoOath')}}
+	      	{{burgemeester-aanstelling/burgemeester-no-oath-template id=outputMayorNoOath class="u-hidden"}}
 		    </li>
 		    <li class="link-list__item">
-		      {{wu-button label="Geen burgemeester benoemd op installatievergadering" onClick=(action 'insertNoMayor')}}
+		      {{wu-button label="Geen burgemeester benoemd ten tijde van installatievergadering" onClick=(action 'insertNoMayor')}}
+		      {{burgemeester-aanstelling/no-burgemeester-template id=outputNoMayor class="u-hidden"}}
 		    </li>
-	      {{burgemeester-aanstelling/no-burgemeester-template id=outputNoMayor class="u-hidden"}}
     	</ul>
     {{/m.content}}
     <div class="modal-dialog__footer">
