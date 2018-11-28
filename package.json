@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "ember-cli-babel": "^6.16.0",
-    "ember-cli-htmlbars": "^3.0.0"
+    "ember-cli-htmlbars": "^3.0.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@ember/optional-features": "^0.6.3",

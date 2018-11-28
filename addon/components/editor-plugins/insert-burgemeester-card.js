@@ -4,6 +4,7 @@ import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
+import uuid from 'uuid/v4';
 
 export default Component.extend({
   layout,
@@ -56,10 +57,11 @@ export default Component.extend({
   },
 
   createWrappingHTML(innerHTML){
-    //adds timestamp to trigger diff
+    //adds uuid to trigger diff. Do it both on top and down the table to make sure everything gets triggered properly
     return `<div property="ext:insertBurgemeesterOutput">
-            ${new Date().toISOString()}
+            <span class="u-hidden">${uuid()}</span>
             ${innerHTML}
+            <span class="u-hidden">${uuid()}</span>
            </div>`;
   },
 
