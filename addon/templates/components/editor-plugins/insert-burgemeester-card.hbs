@@ -58,15 +58,15 @@
 		      </li>
 	      {{else}}
 		      <li class="link-list__item">
-		      	{{wu-button disabled=true label="Burgemeester benoemd en eed afgelegd (nog niet beschikbaar)" onClick=null}}
+		      	{{wu-button disabled=true label="Burgemeester is benoemd en heeft de eed afgelegd (nog niet beschikbaar)" onClick=null}}
 		      </li>
 	      {{/if}}
 		    <li class="link-list__item">
-	      	{{wu-button disabled=true label="Burgemeester benoemd, maar nog geen eedaflegging ten tijde van installatievergadering" onClick=(action 'insertMayorNoOath')}}
+	      	{{wu-button disabled=true label="Burgemeester is benoemd, maar heeft nog geen eedaflegging ten tijde van de installatievergadering" onClick=(action 'insertMayorNoOath')}}
 	      	{{burgemeester-aanstelling/burgemeester-no-oath-template id=outputMayorNoOath class="u-hidden"}}
 		    </li>
 		    <li class="link-list__item">
-		      {{wu-button label="Geen burgemeester benoemd ten tijde van installatievergadering" onClick=(action 'insertNoMayor')}}
+		      {{wu-button label="Geen burgemeester benoemd ten tijde van de installatievergadering" onClick=(action 'insertNoMayor')}}
 		      {{burgemeester-aanstelling/no-burgemeester-template id=outputNoMayor class="u-hidden"}}
 		    </li>
     	</ul>
