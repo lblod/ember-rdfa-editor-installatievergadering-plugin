@@ -206,29 +206,33 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
   },
 
   async setMandaatVoorzitterInInstallatieVergadering(editor){
-    let domNodeWithInstructive = document.querySelector('[property="ext:currentVoorzitterMandaat"]');
-    if(!domNodeWithInstructive)
-      return;
-
-    let prevBestuursorgaanUri = null;
-    if(domNodeWithInstructive.firstElementChild && domNodeWithInstructive.firstElementChild.attributes.resource)
-        prevBestuursorgaanUri = domNodeWithInstructive.firstElementChild.attributes.resource.value;
-    if(prevBestuursorgaanUri == this.bestuursorgaanUri)
+    let domNodeWithInstructives = document.querySelectorAll('[property="ext:currentVoorzitterMandaat"]');
+    if(!domNodeWithInstructives.length || domNodeWithInstructives.length == 0)
       return;
 
     let voorzitter  = await this.getMandaatHuidigeVoorzitterGemeenteraad();
     if(!voorzitter)
       return;
 
-    let updatedHtml =
-     `<span property="ext:currentVoorzitterMandaat">
-        <span class="u-hidden" property="ext:currentVoorzitterMandaatBestuursorgaan" resource=${this.bestuursorgaanUri}>&nbsp;</span>
-        <span property="org:holds" resource=${voorzitter.uri}>
-          ${domNodeWithInstructive.textContent.trim()}
+    domNodeWithInstructives.forEach(domNodeWithInstructive => {
+      let prevBestuursorgaanUri = null;
+
+      if(domNodeWithInstructive.firstElementChild && domNodeWithInstructive.firstElementChild.attributes.resource)
+          prevBestuursorgaanUri = domNodeWithInstructive.firstElementChild.attributes.resource.value;
+
+      if(prevBestuursorgaanUri == this.bestuursorgaanUri)
+        return;
+
+      let updatedHtml =
+       `<span property="ext:currentVoorzitterMandaat">
+          <span class="u-hidden" property="ext:currentVoorzitterMandaatBestuursorgaan" resource=${this.bestuursorgaanUri}>&nbsp;</span>
+          <span property="org:holds" resource=${voorzitter.uri}>
+            ${domNodeWithInstructive.textContent.trim()}
+          </span>
         </span>
-      </span>
-     `;
-    editor.replaceNodeWithHTML(domNodeWithInstructive, updatedHtml, false, [{ who: 'editor-plugins/installatievergadering-card' }]);
+       `;
+        editor.replaceNodeWithHTML(domNodeWithInstructive, updatedHtml, false, [{ who: 'editor-plugins/installatievergadering-card' }]);
+    });
   }
 });
 
