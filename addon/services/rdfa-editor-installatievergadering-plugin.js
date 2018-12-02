@@ -210,17 +210,17 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
     if(!domNodeWithInstructives.length || domNodeWithInstructives.length == 0)
       return;
 
-    let voorzitter  = await this.getMandaatHuidigeVoorzitterGemeenteraad();
-    if(!voorzitter)
-      return;
-
-    domNodeWithInstructives.forEach(domNodeWithInstructive => {
+    domNodeWithInstructives.forEach(async domNodeWithInstructive => {
       let prevBestuursorgaanUri = null;
 
       if(domNodeWithInstructive.firstElementChild && domNodeWithInstructive.firstElementChild.attributes.resource)
           prevBestuursorgaanUri = domNodeWithInstructive.firstElementChild.attributes.resource.value;
 
       if(prevBestuursorgaanUri == this.bestuursorgaanUri)
+        return;
+
+      let voorzitter  = await this.getMandaatHuidigeVoorzitterGemeenteraad();
+      if(!voorzitter)
         return;
 
       let updatedHtml =
