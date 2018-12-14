@@ -79,6 +79,10 @@ export default Component.extend({
     return `output-no-mayor-${this.elementId}`;
   }),
 
+  outputNoMayorNewStyle: computed('id', function() {
+    return `output-no-mayor-new-style-${this.elementId}`;
+  }),
+
   outputMayorNoOath: computed('id', function() {
     return `output-mayor-no-oath${this.elementId}`;
   }),
@@ -89,8 +93,10 @@ export default Component.extend({
       this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
       this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
     },
-    insertNoMayor(){
-      const html = this.createWrappingHTML(document.getElementById(this.outputNoMayor).innerHTML);
+    insertNoMayor(newStyle){
+      let html = this.createWrappingHTML(document.getElementById(this.outputNoMayor).innerHTML);
+      if(newStyle)
+        html = this.createWrappingHTML(document.getElementById(this.outputNoMayorNewStyle).innerHTML);
       this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
       this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
     },
