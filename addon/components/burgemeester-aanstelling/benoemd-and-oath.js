@@ -10,6 +10,8 @@ export default Component.extend({
   }),
 
   mandataris: computed('burgemeesters.[]', 'burgemeesters', function(){
-    return this.burgemeesters.firstObject; //assuming users know best
+    if(this.burgemeesters)
+      return this.burgemeesters.firstObject; //assuming users know best
+    return null;
   })
 });
