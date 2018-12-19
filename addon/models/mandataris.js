@@ -6,6 +6,7 @@ export default Model.extend({
   rangorde: attr('language-string'),
   start: attr('datetime'),
   einde: attr('datetime'),
+  datumEedaflegging: attr('datetime'),
   bekleedt: belongsTo('mandaat', { inverse: null }),
   isBestuurlijkeAliasVan: belongsTo('persoon', { inverse: 'isAangesteldAls' }),
   tijdelijkeVervangingen: hasMany('mandataris', { inverse: null }),
