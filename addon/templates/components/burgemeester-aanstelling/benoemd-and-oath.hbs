@@ -25,7 +25,7 @@
           </li>
           <li>
             {{mandataris.isBestuurlijkeAliasVan.gebruikteVoornaam}} {{mandataris.isBestuurlijkeAliasVan.achternaam}} heeft aldus met ingang van
-            <span class="mark-highlight-manual">Voer start ambt burgemeester in</span> het ambt van burgemeester opgenomen;</li>
+            {{moment-format mandataris.start 'LL'}} het ambt van burgemeester opgenomen;</li>
         </ul>
       </div>
     </div>
@@ -41,7 +41,7 @@
         <meta property="eli:language" resource="http://publications.europa.eu/resource/authority/language/NLD">
         <span property="prov:value">De gemeenteraad neemt kennis van de benoeming en eedaflegging van
           {{mandataris.isBestuurlijkeAliasVan.gebruikteVoornaam}} {{mandataris.isBestuurlijkeAliasVan.achternaam}} tot burgemeester van {{bestuurseenheid.naam}}
-          met ingang van <span class="mark-highlight-manual">Voer start ambt burgemeester in</span>.
+          met ingang van  {{moment-format mandataris.start 'LL'}}.
         </span>
       </div>
     </div>
@@ -70,7 +70,7 @@
           <li>
             Overwegende dat
             {{mandataris.isBestuurlijkeAliasVan.gebruikteVoornaam}} {{mandataris.isBestuurlijkeAliasVan.achternaam}}
-            aldus met ingang van <span class="mark-highlight-manual">Voer start ambt burgemeester in</span> het ambt van burgemeester heeft opgenomen;</li>
+            aldus met ingang van {{moment-format mandataris.start 'LL'}} het ambt van burgemeester heeft opgenomen;</li>
         </ul>
       </div>
     </div>
@@ -86,7 +86,7 @@
         <meta property="eli:language" resource="http://publications.europa.eu/resource/authority/language/NLD">
         <span property="prov:value">Akte te nemen van de benoeming en eedaflegging van
           {{mandataris.isBestuurlijkeAliasVan.gebruikteVoornaam}} {{mandataris.isBestuurlijkeAliasVan.achternaam}} ,
-          tot burgemeester van {{bestuurseenheid.naam}} met ingang van <span class="mark-highlight-manual">Voer start ambt burgemeester in</span>.</span>
+          tot burgemeester van {{bestuurseenheid.naam}} met ingang van {{moment-format mandataris.start 'LL'}}.</span>
       </div>
     </div>
 
