@@ -5,6 +5,7 @@ import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { task } from 'ember-concurrency';
 import uuid from 'uuid/v4';
+import moment from 'moment';
 
 export default Component.extend({
   layout,
@@ -54,9 +55,11 @@ export default Component.extend({
       'filter[bekleedt][bevat-in][is-tijdsspecialisatie-van][bestuurseenheid][:uri:]': this.bestuurseenheid.uri,
       'filter[bekleedt][bevat-in][is-tijdsspecialisatie-van][classificatie][:uri:]': this.collegeClassificatieUri,
       'filter[bekleedt][bestuursfunctie][:uri:]': this.burgemeesterClassificatieUri,
+      'filter[bekleedt][bevat-in][binding-start]': moment(this.bestuursorgaan.bindingStart).format('YYYY-MM-DD'),
       'sort': '-bekleedt.bevat-in.binding-start',
       'include': 'is-bestuurlijke-alias-van'
     };
+
     let burgemeesters = await this.store.query('mandataris', query);
     this.set('burgemeesters', burgemeesters);
   },
