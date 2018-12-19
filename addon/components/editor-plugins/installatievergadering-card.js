@@ -8,7 +8,7 @@ import layout from '../../templates/components/editor-plugins/installatievergade
 * @module editor-installatievergadering-plugin
 * @class InstallatievergaderingCard
 * @extends Ember.Component
-*/
+ */
 export default Component.extend({
   layout,
 

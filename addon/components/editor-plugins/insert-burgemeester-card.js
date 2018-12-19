@@ -9,6 +9,8 @@ import uuid from 'uuid/v4';
 export default Component.extend({
   layout,
   store: service(),
+  collegeClassificatieUri: 'http://data.vlaanderen.be/id/concept/BestuursorgaanClassificatieCode/5ab0e9b8a3b2ca7c5e000006',
+  burgemeesterClassificatieUri: 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000013',
   rdfaEditorInstallatievergaderingPlugin: service(),
   /**
    * Region on which the card applies
@@ -44,6 +46,22 @@ export default Component.extend({
 
   bestuursorgaanUri: reads('rdfaEditorInstallatievergaderingPlugin.bestuursorgaanUri'),
 
+
+  async setBurgemeesters(){
+    if(this.burgemeesters)
+      return;
+    let query = {
+      'filter[bekleedt][bevat-in][is-tijdsspecialisatie-van][bestuurseenheid][:uri:]': this.bestuurseenheid.uri,
+      'filter[bekleedt][bevat-in][is-tijdsspecialisatie-van][classificatie][:uri:]': this.collegeClassificatieUri,
+      'filter[bekleedt][bestuursfunctie][:uri:]': this.burgemeesterClassificatieUri,
+      'sort': '-bekleedt.bevat-in.binding-start',
+      'include': 'is-bestuurlijke-alias-van'
+    };
+    let burgemeesters = await this.store.query('mandataris', query);
+    this.set('burgemeesters', burgemeesters);
+  },
+
+
   async setProperties() {
     let bestuurseenheid = ( await this.store.query('bestuurseenheid',
                                            { 'filter[bestuursorganen][heeft-tijdsspecialisaties][:uri:]': this.bestuursorgaanUri }
@@ -54,6 +72,7 @@ export default Component.extend({
                                                   { 'filter[:uri:]': this.bestuursorgaanUri }
                                                 )).firstObject;
     this.set('bestuursorgaan', bestuursorgaan);
+    await this.setBurgemeesters();
   },
 
   createWrappingHTML(innerHTML){
@@ -87,6 +106,14 @@ export default Component.extend({
     return `output-mayor-no-oath${this.elementId}`;
   }),
 
+  outputMayorBenoemdAndOath: computed('id', function(){
+    return `output-mayor-benoemd-and-oath${this.elementId}`;
+  }),
+
+  outputMayorBenoemdAndOathNewStyle: computed('id', function(){
+    return `output-mayor-benoemd-and-oath-new-style${this.elementId}`;
+  }),
+
   actions: {
     insert(){
       const html = this.createWrappingHTML(document.getElementById(this.outputId).innerHTML);
@@ -102,6 +129,13 @@ export default Component.extend({
     },
     insertMayorNoOath(){
       const html = this.createWrappingHTML(document.getElementById(this.outputMayorNoOath).innerHTML);
+      this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
+      this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
+    },
+    insertMayorBenoemdAndOath(newStyle){
+      let html = this.createWrappingHTML(document.getElementById(this.outputMayorBenoemdAndOath).innerHTML);
+      if(newStyle)
+        html = this.createWrappingHTML(document.getElementById(this.outputMayorBenoemdAndOathNewStyle).innerHTML);
       this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
       this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
     },
