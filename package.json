@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor-installatievergadering-plugin",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
@@ -26,7 +26,7 @@
     "uuid": "^3.3.2",
     "ember-moment": "^7.8.0",
     "ember-cli-moment-shim": "^3.7.1"
-   },
+  },
   "devDependencies": {
     "@ember/optional-features": "^0.6.3",
     "broccoli-asset-rev": "^2.7.0",
