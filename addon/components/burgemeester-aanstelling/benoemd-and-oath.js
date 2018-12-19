@@ -29,8 +29,8 @@ export default Component.extend({
   }),
 
   mandatarisMinBesluit: computed('mandataris', function(){
-    if(this.mandataris.ministrieelBesluit)
-      return moment(this.mandataris.ministrieelBesluit).format('LL');
+    if(this.mandataris.datumMinistrieelBesluit)
+      return moment(this.mandataris.datumMinistrieelBesluit).format('LL');
     return '<span class="mark-highlight-manual">Typ datum</span>';
   })
 });

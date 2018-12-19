@@ -7,6 +7,7 @@ export default Model.extend({
   start: attr('datetime'),
   einde: attr('datetime'),
   datumEedaflegging: attr('datetime'),
+  datumMinistrieelBesluit: attr('datetime'),
   bekleedt: belongsTo('mandaat', { inverse: null }),
   isBestuurlijkeAliasVan: belongsTo('persoon', { inverse: 'isAangesteldAls' }),
   tijdelijkeVervangingen: hasMany('mandataris', { inverse: null }),
