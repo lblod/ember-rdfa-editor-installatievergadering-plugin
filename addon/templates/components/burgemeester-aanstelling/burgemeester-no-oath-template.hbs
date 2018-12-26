@@ -14,33 +14,67 @@
   <div property="ext:variableState" content="initialized">initialized</div>
 </div>
 
-<p class="u-spacer--small">De gemeenteraad,</p>
-<div property="besluit:motivering" lang="nl">
-  <div>
-    <ul class="bullet-list">
-      <li>Gelet op <a href="http://data.lblod.info/WetgevingDocument/1029017" property="eli:cites">het decreet van 22 december 2017 over het lokaal bestuur</a>, de artikelen <a href="http://data.lblod.info/WetgevingArtikel/1234900" property="eli:cites">58</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234901" property="eli:cites">59</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234902" property="eli:cites">60</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234903" property="eli:cites">61</a> en <a href="http://data.lblod.info/WetgevingArtikel/1234904" property="eli:cites">62</a>;</li>
-      <li>Gelet op de omzendbrief KB / ABB 2018 / 3 van 26 oktober 2018 &mdash; Start van de lokale en provinciale bestuursperiode;</li>
-      <li>Gelet op het Ministerieel besluit van <span class="mark-highlight-manual">Typ datum</span> houdende de benoeming van <span id="{{burgemeesterPersoonId1}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester van <span property="ext:setStandAloneCurrentBestuurseenheid">huidig bestuurseenheid</span>;</li>
-    </ul>
+{{#if nieuweStijl}}
+  <p class="u-spacer--small">De gemeenteraad,</p>
+  <div property="besluit:motivering" lang="nl">
+    <div>
+      <ul class="bullet-list">
+        <li>Gelet op <a href="http://data.lblod.info/WetgevingDocument/1029017" property="eli:cites">het decreet van 22 december 2017 over het lokaal bestuur</a>, de artikelen <a href="http://data.lblod.info/WetgevingArtikel/1234900" property="eli:cites">58</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234901" property="eli:cites">59</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234902" property="eli:cites">60</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234903" property="eli:cites">61</a> en <a href="http://data.lblod.info/WetgevingArtikel/1234904" property="eli:cites">62</a>;</li>
+        <li>Gelet op de omzendbrief KB / ABB 2018 / 3 van 26 oktober 2018 &mdash; Start van de lokale en provinciale bestuursperiode;</li>
+        <li>Gelet op het Ministerieel besluit van <span class="mark-highlight-manual">Typ datum</span> houdende de benoeming van <span id="{{burgemeesterPersoonId1}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester van <span property="ext:setStandAloneCurrentBestuurseenheid">huidig bestuurseenheid</span>;</li>
+      </ul>
+    </div>
+    <br>
+    <div>
+      <ul class="bullet-list">
+        <li>
+      	  Overwegende dat de Minister van Binnenlandse Aangelegenheden weliswaar <span id="{{burgemeesterPersoonId2}}" class="mark-highlight-manual">Voer naam burgemeester in</span> benoemde tot burgemeester, maar dat deze de eed nog niet heeft afgelegd;</li>
+      </ul>
+    </div>
   </div>
+
   <br>
-  <div>
-    <ul class="bullet-list">
-      <li>
-      	Overwegende dat de Minister van Binnenlandse Aangelegenheden weliswaar <span id="{{burgemeesterPersoonId2}}" class="mark-highlight-manual">Voer naam burgemeester in</span> benoemde tot burgemeester, maar dat deze de eed nog niet heeft afgelegd;</li>
-    </ul>
+  <br>
+
+  <p class="u-spacer--small">Beslist,</p>
+
+  <div property="prov:value">
+    <div property="eli:has_part" resource="http://data.lblod.info/artikels/{{articleId}}" typeof="besluit:Artikel">
+      <span property="eli:number">Enig artikel.</span>
+      <meta property="eli:language" resource="http://publications.europa.eu/resource/authority/language/NLD">
+      <span property="prov:value">Akte te nemen van de benoeming van <span id="{{burgemeesterPersoonId3}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester van <span property="ext:setStandAloneCurrentBestuurseenheid">huidig bestuurseenheid</span> en het gegeven dat deze de eed niet heeft afgelegd en ten gevolge het <a href="http://data.lblod.info/WetgevingDocument/1029017" property="eli:cites">Decreet Lokaal Bestuur</a>, artikel <a href="http://data.lblod.info/WetgevingAritkel/1234903" property="eli:cites">61</a>, de zittende burgemeester zijn mandaat blijft uitoefenen tot hij als burgemeester vervangen is.</span>
+    </div>
   </div>
-</div>
-
-<br>
-<br>
-
-<p class="u-spacer--small">Beslist,</p>
-
-<div property="prov:value">
-  <div property="eli:has_part" resource="http://data.lblod.info/artikels/${generateUuid()}" typeof="besluit:Artikel">
-    <span property="eli:number">Enig artikel.</span>
-    <meta property="eli:language" resource="http://publications.europa.eu/resource/authority/language/NLD">
-    <span property="prov:value">Akte te nemen van de benoeming van <span id="{{burgemeesterPersoonId3}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester van <span property="ext:setStandAloneCurrentBestuurseenheid">huidig bestuurseenheid</span> en het gegeven dat deze de eed niet heeft afgelegd en ten gevolge het <a href="http://data.lblod.info/WetgevingDocument/1029017" property="eli:cites">Decreet Lokaal Bestuur</a>, artikel <a href="http://data.lblod.info/WetgevingAritkel/1234903" property="eli:cites">61</a>, de zittende burgemeester zijn mandaat blijft uitoefenen tot hij als burgemeester vervangen is.</span>
+{{else}}
+  <div property="besluit:motivering" lang="nl">
+    <div>
+      <h6>Juridische context</h6>
+      <ul class="bullet-list">
+        <li><a href="http://data.lblod.info/WetgevingDocument/1029017" property="eli:cites">Het decreet van 22 december 2017 over het lokaal bestuur</a>, de artikelen <a href="http://data.lblod.info/WetgevingArtikel/1234900" property="eli:cites">58</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234901" property="eli:cites">59</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234902" property="eli:cites">60</a>, <a href="http://data.lblod.info/WetgevingArtikel/1234903" property="eli:cites">61</a> en <a href="http://data.lblod.info/WetgevingArtikel/1234904" property="eli:cites">62</a>;</li>
+        <li>De omzendbrief KB / ABB 2018 / 3 van 26 oktober 2018 &mdash; Start van de lokale en provinciale bestuursperiode;</li>
+        <li>Het Ministerieel besluit van <span class="mark-highlight-manual">Typ datum</span> houdende de benoeming van <span id="{{burgemeesterPersoonId1}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester van <span property="ext:setStandAloneCurrentBestuurseenheid">huidig bestuurseenheid</span>;</li>
+      </ul>
+    </div>
+    <br>
+    <div>
+      <h6>Feitelijke context en argumentatie</h6>
+      <ul class="bullet-list">
+        <li>
+      	  De Minister van Binnenlandse Aangelegenheden benoemde <span id="{{burgemeesterPersoonId2}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester, die weliswaar de eed nog niet heeft afgelegd;</li>
+      </ul>
+    </div>
   </div>
-</div>
+
+  <br>
+  <br>
+
+  <h6>Beslissing</h6>
+
+  <div property="prov:value">
+    <div property="eli:has_part" resource="http://data.lblod.info/artikels/{{articleId}}" typeof="besluit:Artikel">
+      <span property="eli:number">Enig artikel.</span>
+      <meta property="eli:language" resource="http://publications.europa.eu/resource/authority/language/NLD">
+      <span property="prov:value">De gemeenteraad neemt kennis van de benoeming van <span id="{{burgemeesterPersoonId3}}" class="mark-highlight-manual">Voer naam burgemeester in</span> tot burgemeester van <span property="ext:setStandAloneCurrentBestuurseenheid">huidig bestuurseenheid</span> en van het gegeven dat deze de eed niet heeft afgelegd en overeenkomstig artikel <a href="http://data.lblod.info/WetgevingAritkel/1234903" property="eli:cites">61</a> van <a href="http://data.lblod.info/WetgevingDocument/1029017" property="eli:cites">het decreet van 22 december 2017 over het lokaal bestuur</a>, de zittende burgemeester zijn mandaat blijft uitoefenen tot hij als burgemeester vervangen is.</span>
+    </div>
+  </div>
+{{/if}}

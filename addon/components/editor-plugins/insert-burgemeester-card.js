@@ -109,6 +109,10 @@ export default Component.extend({
     return `output-mayor-no-oath${this.elementId}`;
   }),
 
+  outputMayorNoOathNewStyle: computed('id', function() {
+    return `output-mayor-no-oath-new-style-${this.elementId}`;
+  }),
+
   outputMayorBenoemdAndOath: computed('id', function(){
     return `output-mayor-benoemd-and-oath${this.elementId}`;
   }),
@@ -130,8 +134,12 @@ export default Component.extend({
       this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
       this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
     },
-    insertMayorNoOath(){
-      const html = this.createWrappingHTML(document.getElementById(this.outputMayorNoOath).innerHTML);
+    insertMayorNoOath(newStyle){
+      let html = '';
+      if (newStyle)
+        html = this.createWrappingHTML(document.getElementById(this.outputMayorNoOath).innerHTML);
+      else
+        html = this.createWrappingHTML(document.getElementById(this.outputMayorNoOathNewStyle).innerHTML);
       this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
       this.get('editor').replaceNodeWithHTML(this.info.domNodeToUpdate, html);
     },
