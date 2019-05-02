@@ -74,7 +74,7 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
     if(Object.values(cardMap).length > 0){
       Object.keys(cardMap).forEach(k => hintsRegistry.addHints(hrId, k, cardMap[k]));
     }
-  }).keepLatest(),
+  }),
 
   /**
    * Given context object, tries to detect a context the plugin can work on
