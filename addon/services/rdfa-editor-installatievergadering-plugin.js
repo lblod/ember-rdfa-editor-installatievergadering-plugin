@@ -32,6 +32,7 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
    * @public
    */
   execute: task(function * (hrId, contexts, hintsRegistry, editor, extraInfo = []) {
+
     if (contexts.length === 0) return [];
 
     //if we see event was triggered by this plugin, ignore it
@@ -142,7 +143,7 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
    */
   generateHintsForContext(context, instructiveTriple, domNode, editor, options = {}){
     const hints = [];
-    const text = context.text;
+    const text = context.text || '';
     let location = context.region;
     if(instructiveTriple.predicate == this.insertBurgemeesterOutput){
       location = [ editor.getRichNodeFor(domNode).start, editor.getRichNodeFor(domNode).end ];
@@ -172,8 +173,7 @@ const RdfaEditorInstallatievergaderingPlugin = Service.extend({
   },
 
   findDomNodeForContext(editor, context, condition){
-    let richNodes = isArray(context.richNode) ? context.richNode : [ context.richNode ];
-    let domNode = richNodes
+    let domNode = context.richNodes
           .map(r => this.ascendDomNodesUntil(editor.rootNode, r.domNode, condition))
           .find(d => d);
     if(!domNode){
